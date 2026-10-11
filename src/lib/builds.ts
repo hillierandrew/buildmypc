@@ -4,7 +4,8 @@ import type { CatId, HardwarePart, Line, Part } from "./types";
 
 export const CHEAP_KEY = "c0";
 export const MAX_KEY = "x0";
-export const GAME_KEYS = ["fort", "cad", "3dm", "wz", "pubg", "mc", "rbx", "val", "cs2", "cp2077", "lol"] as const;
+export const BUDGET_KEYS = ["u1000", "u1500", "u2000", "u2500", "u3000", "u5000"] as const;
+export const GAME_KEYS = ["mc", "rbx", "lol", "val", "sky", "fort", "cs2", "pubg", "sky2", "wz", "cp1080", "cp2077", "vr", "cad", "3dm"] as const;
 
 const FILL: CatId[] = ["gpu", "ssd", "cooler", "psu", "case", "sound"];
 

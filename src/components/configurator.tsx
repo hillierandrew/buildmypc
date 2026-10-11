@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DB, REQUIRED, specOf } from "@/lib/catalog";
 import { issueAgainstBuild, summarize } from "@/lib/compat";
-import { CHEAP_KEY, GAME_KEYS, MAX_KEY, caseChoices, gapsFor, linesFrom, materialize, soundChoices, spread, withPart, withoutCat } from "@/lib/builds";
+import { BUDGET_KEYS, CHEAP_KEY, GAME_KEYS, MAX_KEY, caseChoices, gapsFor, linesFrom, materialize, soundChoices, spread, withPart, withoutCat } from "@/lib/builds";
 import { money } from "@/lib/format";
 import { LANGS, isLang, t } from "@/lib/i18n";
 import { useBuilder } from "@/lib/store";
@@ -24,7 +24,7 @@ const NAV: [CatId, string, boolean][] = [
 ];
 
 const GAP_ORDER: CatId[] = ["gpu", "ssd", "cooler", "psu", "case", "sound"];
-const BUDGETS = [800, 1000, 1250, 1500, 2000, 2500, 3000];
+const BUDGETS = [1000, 1500, 2000, 2500, 3000, 5000];
 
 const USES: { id: string; label: string; entry: string; balanced: string; high: string; enthusiast: string }[] = [
   { id: "game", label: "use_game", entry: "g4", balanced: "g2", high: "g7", enthusiast: "g3" },
@@ -202,16 +202,16 @@ export function Configurator() {
     const use = USES.find((u) => u.id === useId) ?? USES[0];
     let key = use[tier];
     if (useId === "game") {
-      if (res === "1080") key = tier === "entry" || care === "price" ? "lol" : "fort";
-      if (res === "1440") key = care === "price" ? "pubg" : "wz";
-      if (res === "4k") key = tier === "enthusiast" || care === "performance" ? "cp2077" : "g7";
+      if (res === "1080") key = tier === "entry" || care === "price" ? "mc" : "fort";
+      if (res === "1440") key = care === "price" ? "sky2" : "cs2";
+      if (res === "4k") key = tier === "enthusiast" || care === "performance" ? "cp2077" : "cp1080";
     }
     if (care === "price" && useId !== "game") key = use.entry;
     if (care === "quiet") key = "e6";
     if (care === "upgrade" && useId !== "game") key = use.high;
     let chosen = prebuilt(key) ?? prebuilt(use.balanced) ?? prebuilt(use.entry);
     if (chosen && budget && chosen.p > budget) {
-      const ladder = [use.entry, use.balanced, use.high, use.enthusiast, "c0", "lol", "rbx"]
+      const ladder = [...BUDGET_KEYS, use.entry, use.balanced, use.high, use.enthusiast, "c0", "lol", "rbx", "mc"]
         .map((k) => prebuilt(k))
         .filter((p): p is NonNullable<typeof p> => Boolean(p))
         .filter((p) => p.p <= budget)
@@ -284,6 +284,14 @@ export function Configurator() {
             <div className="build-list">
               <Row k={CHEAP_KEY} />
               <Row k={MAX_KEY} />
+            </div>
+          </section>
+          <section className="group">
+            <h2>{tr("budgets")}</h2>
+            <div className="build-list">
+              {BUDGET_KEYS.map((k) => (
+                <Row key={k} k={k} />
+              ))}
             </div>
           </section>
           <section className="group">

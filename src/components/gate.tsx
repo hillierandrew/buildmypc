@@ -20,8 +20,11 @@ export function Gate() {
   const dinoHits = useRef(0);
   const cactusHits = useRef(0);
   const nHits = useRef(0);
+  const cHits = useRef(0);
   const pwOpenRef = useRef(pwOpen);
   const timer = useRef(0);
+  const screamRef = useRef<{ stop: () => void } | null>(null);
+  const [hacked, setHacked] = useState(false);
   pwOpenRef.current = pwOpen;
 
   useEffect(() => {
@@ -169,6 +172,73 @@ export function Gate() {
     }
   }
 
+  function stopScream() {
+    screamRef.current?.stop();
+    screamRef.current = null;
+    setHacked(false);
+  }
+
+  function startScream() {
+    screamRef.current?.stop();
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.value = 180;
+    gain.gain.value = 0.22;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    let up = true;
+    const id = window.setInterval(() => {
+      const now = ctx.currentTime;
+      osc.frequency.cancelScheduledValues(now);
+      osc.frequency.setValueAtTime(up ? 160 : 920, now);
+      osc.frequency.linearRampToValueAtTime(up ? 980 : 120, now + 0.16);
+      up = !up;
+    }, 160);
+    const stop = () => {
+      window.clearInterval(id);
+      try {
+        osc.stop();
+        void ctx.close();
+      } catch {
+        /* already stopped */
+      }
+    };
+    screamRef.current = { stop };
+  }
+
+  function hitC() {
+    cHits.current += 1;
+    if (cHits.current >= 10) {
+      cHits.current = 0;
+      startScream();
+      setHacked(true);
+    }
+  }
+
+  useEffect(() => {
+    if (!hacked) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") stopScream();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [hacked]);
+
+  useEffect(() => () => screamRef.current?.stop(), []);
+
+  if (hacked) {
+    return (
+      <button type="button" className="hack" onClick={stopScream}>
+        <span>lol you got hacked</span>
+      </button>
+    );
+  }
+
   if (exile) {
     return (
       <div className="exile">
@@ -188,14 +258,22 @@ export function Gate() {
         <canvas ref={canvasRef} width={420} height={110} aria-label="Offline dinosaur" />
         <div id="main-message">
           <h1>
-            No internet co
+            No internet{" "}
+            <button type="button" className="secret-n" onClick={hitC}>
+              c
+            </button>
+            o
             <button type="button" className="secret-n" onClick={hitN}>
               n
             </button>
             <button type="button" className="secret-n" onClick={hitN}>
               n
             </button>
-            ectio
+            e
+            <button type="button" className="secret-n" onClick={hitC}>
+              c
+            </button>
+            tio
             <button type="button" className="secret-n" onClick={hitN}>
               n
             </button>
