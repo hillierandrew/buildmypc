@@ -1,0 +1,160 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Gurmukhi:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&display=swap");
+
+.cfg {
+  --bg: #f4f0e6;
+  --card: #fffdf8;
+  --ink: #1c1915;
+  --muted: #5c564c;
+  --line: #ddd4c4;
+  --accent: #1f4d3a;
+  --accent-ink: #f4f0e6;
+  --price: #8d2f2a;
+  --ok: #1f6b45;
+  --bad: #8d2f2a;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.45 "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Noto Sans Gurmukhi", "Noto Sans SC", sans-serif;
+  min-height: 0;
+}
+.cfg.dark {
+  --bg: #141311;
+  --card: #1e1c19;
+  --ink: #f3efe6;
+  --muted: #b7ab9a;
+  --line: #3a342c;
+  --accent: #e4c99a;
+  --accent-ink: #141311;
+  --price: #e4b15a;
+  --ok: #8fceaa;
+  --bad: #f0a8a0;
+}
+.cfg.home, .cfg.finish { overflow: auto; padding: 28px 20px 72px; }
+.cfg .sheet { width: min(720px, 100%); }
+.cfg h1, .cfg h2 { font-family: "Libre Baskerville", Georgia, "Iowan Old Style", Palatino, serif; font-weight: 400; letter-spacing: 0; }
+.cfg h1 { font-size: 28px; line-height: 1.2; margin: 0; }
+.cfg h2 { font-size: 22px; margin: 28px 0 8px; }
+.cfg h3 { font-size: 14px; font-weight: 650; color: var(--muted); margin: 14px 0 6px; font-family: inherit; }
+.cfg .lead { color: var(--muted); max-width: 62ch; margin: 12px 0 0; }
+.cfg .shop-top, .cfg .finish-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cfg .finish-head { position: sticky; top: 0; background: var(--bg); z-index: 2; padding: 4px 0 12px; }
+.cfg .finish-head .go { width: auto; min-width: 160px; margin: 0; }
+.cfg .price-lg { margin: 0; font-size: 22px; color: var(--price); font-weight: 700; }
+.cfg .group { margin-top: 8px; }
+.cfg .build-list, .cfg .picks, .cfg .pills { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.cfg .build-row, .cfg .pills button, .cfg .picks button, .cfg .go, .cfg .row button, .cfg .buy button, .cfg .more, .cfg .detail button, .cfg .saves button {
+  text-align: start;
+  min-height: 52px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 2px;
+  padding: 10px 12px;
+}
+.cfg .build-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; width: 100%; }
+.cfg .build-row .txt { flex: 1; min-width: min(100%, 220px); }
+.cfg .build-row b, .cfg .picks button b { display: block; font-weight: 650; }
+.cfg .build-row span, .cfg .picks button small { display: block; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.cfg .build-row em, .cfg .picks button em, .cfg .receipt em { font-style: normal; color: var(--price); font-weight: 700; white-space: nowrap; }
+.cfg .build-row:hover, .cfg .pills button:hover, .cfg .picks button:hover { border-color: var(--ink); }
+.cfg .pills button.on, .cfg .picks button.on { border-color: var(--ink); background: var(--bg); }
+.cfg .picks button { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; }
+.cfg .go { margin-top: 16px; background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; width: auto; min-width: 180px; }
+.cfg .text { background: none; border: 0; color: var(--accent); padding: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; border-radius: 0; }
+.cfg .end-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 28px; }
+.cfg .theme-pair { display: flex; border: 1px solid var(--line); flex: none; }
+.cfg .theme-pair button { min-height: 40px; min-width: 64px; border: 0; background: transparent; color: var(--ink); padding: 0 12px; border-radius: 0; }
+.cfg .theme-pair button.on { background: var(--ink); color: var(--bg); }
+.cfg .langs { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line); }
+.cfg .langs button { background: none; border: 0; color: var(--muted); min-height: 44px; padding: 0; border-radius: 0; }
+.cfg .langs button.on { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.cfg .receipt { list-style: none; margin: 8px 0 0; padding: 0; }
+.cfg .receipt li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.cfg .top {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  background: var(--bg);
+}
+.cfg .top input, .cfg select, .cfg .sum-h input {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 2px;
+}
+.cfg .top input { flex: 1; min-width: 160px; }
+.cfg .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); }
+.cfg .sum, .cfg .catalog { min-height: 0; overflow: auto; padding: 12px; }
+.cfg .sum { border-right: 1px solid var(--line); }
+.cfg .sum-h { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.cfg .sum-h input { flex: 1; font-weight: 650; }
+.cfg .flag { font-size: 13px; white-space: nowrap; }
+.cfg .flag.ok, .cfg .ok { color: var(--ok); }
+.cfg .flag.bad, .cfg .bad, .cfg .why { color: var(--bad); }
+.cfg .money { font-size: 28px; margin: 8px 0; }
+.cfg .money small { font-size: 14px; color: var(--muted); font-weight: 400; }
+.cfg .fine { color: var(--muted); font-size: 13px; }
+.cfg .slots { list-style: none; margin: 0; padding: 0; }
+.cfg .slots button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  text-align: start;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  min-height: 58px;
+  padding: 8px 4px;
+}
+.cfg .slots button.on { background: var(--card); }
+.cfg .slots span { color: var(--muted); font-size: 12px; }
+.cfg .slots b { grid-column: 1; font-size: 14px; font-weight: 650; }
+.cfg .slots em { grid-row: 1 / span 2; align-self: center; font-style: normal; color: var(--muted); }
+.cfg .row, .cfg .tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin: 8px 0; }
+.cfg .check { display: flex; gap: 8px; align-items: center; min-height: 44px; }
+.cfg .parts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cfg .parts li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 12px;
+  background: var(--card);
+}
+.cfg .parts .in { border-color: var(--ink); }
+.cfg .incompatible-greyed-out { opacity: 0.45; }
+.cfg .buy { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.cfg .buy b { color: var(--price); }
+.cfg .detail { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 2px; background: var(--card); }
+.cfg .cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+.cfg .saves { list-style: none; margin: 0; padding: 0; }
+.cfg .saves li { display: flex; gap: 8px; align-items: center; }
+.cfg .build-toggle { display: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); min-height: 40px; padding: 0 12px; border-radius: 2px; }
+@media (max-width: 800px) {
+  .cfg .body { grid-template-columns: 1fr; }
+  .cfg .sum { display: none; border-right: 0; }
+  .cfg .body.show-build .sum { display: block; }
+  .cfg .body.show-build .catalog { display: none; }
+  .cfg .build-toggle { display: inline-flex; align-items: center; }
+  .cfg .parts li { grid-template-columns: 1fr; }
+  .cfg .buy { align-items: stretch; }
+  .cfg .top { position: sticky; top: 0; z-index: 2; }
+}
