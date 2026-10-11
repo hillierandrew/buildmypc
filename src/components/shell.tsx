@@ -3,6 +3,7 @@ import { DISGUISE_KEYS } from "@/lib/disguises";
 import { LAYOUT_CHOICES, useBuilder } from "@/lib/store";
 import { styleById } from "@/lib/ui-styles";
 import { Configurator } from "@/components/configurator";
+import { EasyBar } from "@/components/easy-bar";
 import { Gate } from "@/components/gate";
 import { Disguise, Toast } from "@/components/overlays";
 
@@ -119,6 +120,7 @@ export function Shell() {
       ) : (
         <>
           <Configurator />
+          <EasyBar />
         </>
       )}
       {disguise ? <Disguise /> : null}

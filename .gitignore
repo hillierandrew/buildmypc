@@ -10,5 +10,6 @@ dist-pages
 site.html
 *.log
 .project_id
+public/dreams.mp3
 .node_modules.lock
 .DS_Store

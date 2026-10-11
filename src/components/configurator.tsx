@@ -56,22 +56,6 @@ function blocked(part: Part, lines: Line[]) {
   return issueAgainstBuild(part, lines);
 }
 
-function ThemeSwitch({ lang }: { lang: string }) {
-  const theme = useBuilder((s) => s.themeCycle);
-  const setThemeMode = useBuilder((s) => s.setThemeMode);
-  const light = theme === "light";
-  return (
-    <div className="theme-pair" role="group" aria-label={`${t(lang, "light")} / ${t(lang, "dark")}`}>
-      <button type="button" className={light ? "on" : ""} aria-pressed={light} onClick={() => setThemeMode("light")}>
-        {t(lang, "light")}
-      </button>
-      <button type="button" className={!light ? "on" : ""} aria-pressed={!light} onClick={() => setThemeMode("dark")}>
-        {t(lang, "dark")}
-      </button>
-    </div>
-  );
-}
-
 function LangRow({ lang }: { lang: string }) {
   const setLang = useBuilder((s) => s.setLang);
   return (
@@ -98,11 +82,13 @@ export function Configurator() {
   const deleteSave = useBuilder((s) => s.deleteSave);
   const showToast = useBuilder((s) => s.showToast);
   const themeCycle = useBuilder((s) => s.themeCycle);
+  const layoutMode = useBuilder((s) => s.layoutMode);
   const lang = useBuilder((s) => s.lang);
   const setLang = useBuilder((s) => s.setLang);
   const setThemeMode = useBuilder((s) => s.setThemeMode);
 
   const tr = (key: string, vars?: Record<string, string>) => t(lang, key, vars);
+  const cad = (n: number) => `${money(n)} CAD`;
   const named = (key: string, fallback: string) => {
     const text = tr(key);
     return text === key ? fallback : text;
@@ -129,12 +115,15 @@ export function Configurator() {
   const [showSaves, setShowSaves] = useState(false);
   const [mobileBuild, setMobileBuild] = useState(false);
   const [pending, setPending] = useState<{ id: string; gaps: CatId[] } | null>(null);
+  const [kept, setKept] = useState(false);
 
   useEffect(() => {
     const storedLang = localStorage.getItem("bmpc-lang");
     const storedTheme = localStorage.getItem("bmpc-theme");
     if (storedLang && isLang(storedLang)) setLang(storedLang);
-    if (storedTheme === "light" || storedTheme === "dark") setThemeMode(storedTheme);
+    if (storedTheme === "light" || storedTheme === "dark" || storedTheme === "green" || storedTheme === "blue" || storedTheme === "red") {
+      setThemeMode(storedTheme);
+    }
   }, [setLang, setThemeMode]);
 
   useEffect(() => {
@@ -160,22 +149,23 @@ export function Configurator() {
   const shown = useMemo(() => {
     const query = q.trim().toLowerCase();
     let list = pool.filter((p) => {
-      if (brand && p.brand !== brand) return false;
-      if (sock && "sock" in p && p.sock !== sock) return false;
+      if (expert && brand && p.brand !== brand) return false;
+      if (expert && sock && "sock" in p && p.sock !== sock) return false;
       if (!query) return true;
       const blob = `${p.n} ${p.brand} ${p.tags.join(" ")} ${specOf(p)}`.toLowerCase();
       return blob.includes(query);
     });
-    if (onlyFit) list = list.filter((p) => !blocked(p, lines));
+    if (expert ? onlyFit : true) list = list.filter((p) => !blocked(p, lines));
+    const sortKey = expert ? sort : "price-asc";
     const perf = (p: Part) => ("f" in p && typeof p.f === "number" ? p.f : 0);
     list = [...list].sort((a, b) => {
-      if (sort === "price-asc") return a.p - b.p;
-      if (sort === "price-desc") return b.p - a.p;
-      if (sort === "perf") return perf(b) - perf(a) || a.p - b.p;
+      if (sortKey === "price-asc") return a.p - b.p;
+      if (sortKey === "price-desc") return b.p - a.p;
+      if (sortKey === "perf") return perf(b) - perf(a) || a.p - b.p;
       return a.p / Math.max(1, perf(a) || 1) - b.p / Math.max(1, perf(b) || 1);
     });
     return list;
-  }, [pool, q, brand, sock, onlyFit, sort, lines]);
+  }, [pool, q, brand, sock, onlyFit, sort, lines, expert]);
 
   function openCat(next: CatId) {
     setCat(next);
@@ -193,9 +183,9 @@ export function Configurator() {
     if (!chosen) return;
     loadCart(materialize(chosen.parts, withWindows));
     setPending({ id: chosen.id, gaps: gapsFor(chosen.parts) });
+    setKept(false);
     setBuildName(named(`name_${chosen.k}`, chosen.n));
     setScreen("finish");
-    showToast(named(`name_${chosen.k}`, chosen.n));
   }
 
   function finishWizard() {
@@ -232,16 +222,24 @@ export function Configurator() {
 
   const open = openId ? pool.find((p) => p.id === openId) : null;
   const compared = compare.map((id) => Object.values(DB).flat().find((p) => p.id === id)).filter((p): p is Part => Boolean(p));
-  const light = themeCycle === "light";
+  const look = themeCycle === "dark" || themeCycle === "green" || themeCycle === "blue" || themeCycle === "red" ? themeCycle : "";
+  const size =
+    layoutMode === "tv" || layoutMode === "console"
+      ? "size-tv"
+      : layoutMode === "tablet"
+        ? "size-tablet"
+        : layoutMode === "desk" || layoutMode === "browser"
+          ? "size-desk"
+          : "size-phone";
+  const skin = ["cfg", look, size].filter(Boolean).join(" ");
   const dir = lang === "ur" ? "rtl" : "ltr";
-  const tone = light ? "light" : "dark";
 
   const tips: { text: string; run?: () => void; label?: string }[] = [];
   if (missing.length) tips.push({ text: tr("stillNeed", { list: missing.map(([id]) => tr(`cat_${id}`)).join(", ") }) });
   if (over) {
     const optional = [...lines].filter((l) => l.part.cat === "fan" || (l.part.cat === "sound" && l.part.p > 0) || l.part.cat === "nic").sort((a, b) => b.part.p - a.part.p)[0];
     tips.push({
-      text: tr("overBudget", { n: money(summary.tot - budget) }),
+      text: tr("overBudget", { n: cad(summary.tot - budget) }),
       run: optional ? () => del(optional.part.id) : undefined,
       label: optional ? tr("removePart", { n: optional.part.n }) : undefined,
     });
@@ -264,7 +262,7 @@ export function Configurator() {
           <b>{named(`name_${k}`, item.n)}</b>
           <span>{named(`blurb_${k}`, item.desc)}</span>
         </span>
-        <em>{item.g === "Bundle" ? tr("from", { n: money(item.p) }) : money(item.p)}</em>
+        <em>{item.g === "Bundle" ? tr("from", { n: cad(item.p) }) : cad(item.p)}</em>
       </button>
     );
   }
@@ -272,13 +270,13 @@ export function Configurator() {
   if (screen === "home") {
     const bundles = DB.pb.filter((p) => p.cat === "pb" && p.g === "Bundle");
     return (
-      <div className={`cfg home ${tone}`} dir={dir}>
+      <div className={`${skin} home`} dir={dir}>
         <div className="sheet">
           <div className="shop-top">
             <h1>{tr("shop")}</h1>
-            <ThemeSwitch lang={lang} />
           </div>
           <p className="lead">{tr("intro")}</p>
+          <p className="fine">{tr("priceNote")}</p>
           <section className="group">
             <h2>{tr("priced")}</h2>
             <div className="build-list">
@@ -327,13 +325,12 @@ export function Configurator() {
 
   if (screen === "ask") {
     return (
-      <div className={`cfg home ${tone}`} dir={dir}>
+      <div className={`${skin} home`} dir={dir}>
         <div className="sheet">
           <div className="shop-top">
             <button type="button" className="text" onClick={() => (step === 0 ? setScreen("home") : setStep((n) => n - 1))}>
               {tr("back")}
             </button>
-            <ThemeSwitch lang={lang} />
           </div>
           {step === 0 ? (
             <>
@@ -432,7 +429,7 @@ export function Configurator() {
     }
 
     return (
-      <div className={`cfg finish ${tone}`} dir={dir}>
+      <div className={`${skin} finish`} dir={dir}>
         <div className="sheet">
           <div className="finish-head">
             <div>
@@ -440,14 +437,21 @@ export function Configurator() {
                 {tr("back")}
               </button>
               <h1>{title}</h1>
-              <p className="price-lg">{money(summary.tot)}</p>
+              <p className="price-lg">{cad(summary.tot)}</p>
+              <p className="fine">{tr("priceNote")}</p>
             </div>
-            <button type="button" className="go" onClick={() => setScreen("build")}>
-              {tr("looksGood")}
+            <button
+              type="button"
+              className="go"
+              onClick={() => {
+                saveCurrent(title);
+                setKept(true);
+              }}
+            >
+              {kept ? tr("saved") : tr("looksGood")}
             </button>
           </div>
-          <ThemeSwitch lang={lang} />
-          <p className="lead">{tr("swapNote")}</p>
+          <p className="lead">{gaps.length ? tr("swapNote") : tr("fitsAlready")}</p>
           {hard.map((issue) => (
             <p key={issue.msg} className="why">
               {issue.msg}
@@ -460,7 +464,7 @@ export function Configurator() {
                 <span>
                   {tr(`cat_${l.part.cat}`)} · {l.part.n}
                 </span>
-                <em>{l.part.p ? money(l.part.p * l.qty) : tr("included")}</em>
+                <em>{l.part.p ? cad(l.part.p * l.qty) : tr("included")}</em>
               </li>
             ))}
           </ul>
@@ -477,7 +481,7 @@ export function Configurator() {
                           <b>{p.n}</b>
                           <small>{specOf(p)}</small>
                         </span>
-                        <em>{money(p.p)}</em>
+                        <em>{cad(p.p)}</em>
                       </button>
                     ))}
                   </div>
@@ -489,7 +493,7 @@ export function Configurator() {
                           <b>{p.n}</b>
                           <small>{specOf(p)}</small>
                         </span>
-                        <em>{money(p.p)}</em>
+                        <em>{cad(p.p)}</em>
                       </button>
                     ))}
                   </div>
@@ -507,7 +511,7 @@ export function Configurator() {
                           <b>{p.n}</b>
                           <small>{specOf(p)}</small>
                         </span>
-                        <em>{p.p ? money(p.p) : tr("included")}</em>
+                        <em>{p.p ? cad(p.p) : tr("included")}</em>
                       </button>
                     ))}
                   </div>
@@ -532,7 +536,7 @@ export function Configurator() {
                         <b>{p.n}</b>
                         <small>{specOf(p)}</small>
                       </span>
-                      <em>{p.p ? money(p.p) : tr("included")}</em>
+                      <em>{p.p ? cad(p.p) : tr("included")}</em>
                     </button>
                   ))}
                 </div>
@@ -554,7 +558,7 @@ export function Configurator() {
   }
 
   return (
-    <div className={`cfg ${tone}`} dir={dir}>
+    <div className={skin} dir={dir}>
       <header className="top">
         <button type="button" className="text" onClick={() => setScreen("home")}>
           {tr("shop")}
@@ -568,10 +572,9 @@ export function Configurator() {
           onChange={(e) => { setQ(e.target.value); setLimit(16); }}
         />
         <span className={over ? "bad" : ""}>
-          {money(summary.tot)}
-          {budget ? ` / ${money(budget)}` : ""}
+          {cad(summary.tot)}
+          {budget ? ` / ${cad(budget)}` : ""}
         </span>
-        <ThemeSwitch lang={lang} />
         <button type="button" className="build-toggle" onClick={() => setMobileBuild((v) => !v)}>
           {mobileBuild ? tr("parts") : tr("yourBuild")}
         </button>
@@ -586,8 +589,8 @@ export function Configurator() {
             </b>
           </div>
           <p className="money">
-            {money(summary.tot)}
-            {budget ? <small>{over ? ` ${tr("overBy", { n: money(summary.tot - budget) })}` : ` ${tr("left", { n: money(budget - summary.tot) })}`}</small> : null}
+            {cad(summary.tot)}
+            {budget ? <small>{over ? ` ${tr("overBy", { n: cad(summary.tot - budget) })}` : ` ${tr("left", { n: cad(budget - summary.tot) })}`}</small> : null}
           </p>
           {summary.watts ? (
             <p className="fine">{tr("watts", { n: String(summary.watts), w: String(Math.ceil((summary.watts * 1.2) / 50) * 50) })}</p>
@@ -603,7 +606,7 @@ export function Configurator() {
                       {required && !picked.length ? ` · ${tr("needed")}` : ""}
                     </span>
                     <b>{picked.length ? picked.map((l) => l.part.n).join(", ") : tr("notSelected")}</b>
-                    <em>{picked.length ? money(picked.reduce((a, l) => a + l.part.p * l.qty, 0)) : ""}</em>
+                    <em>{picked.length ? cad(picked.reduce((a, l) => a + l.part.p * l.qty, 0)) : ""}</em>
                   </button>
                 </li>
               );
@@ -660,6 +663,7 @@ export function Configurator() {
           <LangRow lang={lang} />
         </aside>
         <main className="catalog">
+          {expert ? (
           <div className="tools">
             <label>
               {tr("sort")}
@@ -697,6 +701,7 @@ export function Configurator() {
               {tr("onlyFit")}
             </label>
           </div>
+          ) : null}
           <ul className="parts">
             {shown.slice(0, limit).map((p) => {
               const reason = blocked(p, lines);
@@ -711,7 +716,7 @@ export function Configurator() {
                     {reason && !inBuild ? <p className="why">✕ {reason}</p> : <p className="ok">{inBuild ? `✓ ${tr("inBuild")}` : `✓ ${tr("fits")}`}</p>}
                   </div>
                   <div className="buy">
-                    <b>{p.p ? money(p.p) : tr("included")}</b>
+                    <b>{p.p ? cad(p.p) : tr("included")}</b>
                     <button type="button" disabled={!!reason && !inBuild} onClick={() => (inBuild ? del(p.id) : add(p.id))}>
                       {inBuild ? tr("remove") : reason ? tr("wontFit") : tr("add")}
                     </button>
@@ -740,7 +745,7 @@ export function Configurator() {
             <section className="detail">
               <h2>{open.n}</h2>
               <p>
-                {open.brand} · {money(open.p)} · {tr("catalogPrice")}
+                {open.brand} · {cad(open.p)} · {tr("catalogPrice")}
               </p>
               <p>{specOf(open)}</p>
               <p>{open.tags.join(" · ")}</p>
@@ -759,9 +764,9 @@ export function Configurator() {
                 {compared.map((p) => (
                   <article key={p.id}>
                     <b>{p.n}</b>
-                    <p>{money(p.p)}</p>
+                    <p>{cad(p.p)}</p>
                     <p>{specOf(p)}</p>
-                    <button type="button" onClick={() => add(p.id)}>
+                    <button type="button" disabled={!!blocked(p, lines)} onClick={() => add(p.id)}>
                       {tr("add")}
                     </button>
                   </article>

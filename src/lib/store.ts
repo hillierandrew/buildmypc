@@ -132,7 +132,7 @@ interface BuilderState {
   setBasic: (v: boolean) => void;
   setFilter: <K extends keyof Filters>(k: K, v: Filters[K]) => void;
   cycleTheme: () => void;
-  setThemeMode: (mode: "light" | "dark") => void;
+  setThemeMode: (mode: "light" | "dark" | "green" | "blue" | "red") => void;
   setLang: (lang: string) => void;
   cycleLayout: () => void;
   setLayout: (mode: LayoutMode) => void;

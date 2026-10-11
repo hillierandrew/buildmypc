@@ -80,10 +80,7 @@ export function materialize(parts: Part[], windows?: boolean): Record<string, nu
 
 export function gapsFor(parts: Part[]): CatId[] {
   const present = new Set(parts.map((p) => p.cat));
-  const gaps = FILL.filter((cat) => !present.has(cat));
-  if (!gaps.includes("case")) gaps.push("case");
-  if (!gaps.includes("sound")) gaps.push("sound");
-  return gaps;
+  return FILL.filter((cat) => !present.has(cat));
 }
 
 export function spread(cat: CatId, lines: Line[], currentId?: string): HardwarePart[] {

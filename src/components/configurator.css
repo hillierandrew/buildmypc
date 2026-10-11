@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Gurmukhi:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&display=swap");
 
-.cfg {
+.cfg,
+.easy-bar {
   --bg: #f4f0e6;
   --card: #fffdf8;
   --ink: #1c1915;
@@ -11,6 +12,8 @@
   --price: #8d2f2a;
   --ok: #1f6b45;
   --bad: #8d2f2a;
+}
+.cfg {
   position: absolute;
   inset: 0;
   display: flex;
@@ -20,7 +23,8 @@
   font: 16px/1.45 "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Noto Sans Gurmukhi", "Noto Sans SC", sans-serif;
   min-height: 0;
 }
-.cfg.dark {
+.cfg.dark,
+.easy-bar.dark {
   --bg: #141311;
   --card: #1e1c19;
   --ink: #f3efe6;
@@ -32,8 +36,47 @@
   --ok: #8fceaa;
   --bad: #f0a8a0;
 }
-.cfg.home, .cfg.finish { overflow: auto; padding: 28px 20px 72px; }
-.cfg .sheet { width: min(720px, 100%); }
+.cfg.green,
+.easy-bar.green {
+  --bg: #e7f2e4;
+  --card: #f7fff4;
+  --ink: #142117;
+  --muted: #3e5c46;
+  --line: #b7d0b4;
+  --accent: #1d6b32;
+  --accent-ink: #f4fff6;
+  --price: #8d2f2a;
+  --ok: #1d6b32;
+  --bad: #8d2f2a;
+}
+.cfg.blue,
+.easy-bar.blue {
+  --bg: #e7eef6;
+  --card: #f7fbff;
+  --ink: #142033;
+  --muted: #3d516c;
+  --line: #c5d3e4;
+  --accent: #1d4e89;
+  --accent-ink: #f4f8ff;
+  --price: #8d2f2a;
+  --ok: #1d6b45;
+  --bad: #8d2f2a;
+}
+.cfg.red,
+.easy-bar.red {
+  --bg: #f8ebe6;
+  --card: #fff8f5;
+  --ink: #2a1614;
+  --muted: #6c463f;
+  --line: #e4c8c0;
+  --accent: #8d2f2a;
+  --accent-ink: #fff6f4;
+  --price: #6e221e;
+  --ok: #1f6b45;
+  --bad: #8d2f2a;
+}
+.cfg.home, .cfg.finish { overflow: auto; padding: 28px 20px 132px; }
+.cfg .sheet { width: min(720px, 100%); margin-inline: auto; }
 .cfg h1, .cfg h2 { font-family: "Libre Baskerville", Georgia, "Iowan Old Style", Palatino, serif; font-weight: 400; letter-spacing: 0; }
 .cfg h1 { font-size: 28px; line-height: 1.2; margin: 0; }
 .cfg h2 { font-size: 22px; margin: 28px 0 8px; }
@@ -48,7 +91,7 @@
 }
 .cfg .finish-head { position: sticky; top: 0; background: var(--bg); z-index: 2; padding: 4px 0 12px; }
 .cfg .finish-head .go { width: auto; min-width: 160px; margin: 0; }
-.cfg .price-lg { margin: 0; font-size: 22px; color: var(--price); font-weight: 700; }
+.cfg .price-lg { margin: 0; font-size: 32px; color: var(--price); font-weight: 700; }
 .cfg .group { margin-top: 8px; }
 .cfg .build-list, .cfg .picks, .cfg .pills { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .cfg .build-row, .cfg .pills button, .cfg .picks button, .cfg .go, .cfg .row button, .cfg .buy button, .cfg .more, .cfg .detail button, .cfg .saves button {
@@ -64,7 +107,7 @@
 .cfg .build-row .txt { flex: 1; min-width: min(100%, 220px); }
 .cfg .build-row b, .cfg .picks button b { display: block; font-weight: 650; }
 .cfg .build-row span, .cfg .picks button small { display: block; color: var(--muted); font-weight: 400; margin-top: 2px; }
-.cfg .build-row em, .cfg .picks button em, .cfg .receipt em { font-style: normal; color: var(--price); font-weight: 700; white-space: nowrap; }
+.cfg .build-row em, .cfg .picks button em, .cfg .receipt em { font-style: normal; color: var(--price); font-weight: 700; white-space: nowrap; font-size: 18px; }
 .cfg .build-row:hover, .cfg .pills button:hover, .cfg .picks button:hover { border-color: var(--ink); }
 .cfg .pills button.on, .cfg .picks button.on { border-color: var(--ink); background: var(--bg); }
 .cfg .picks button { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; }
@@ -98,7 +141,7 @@
 }
 .cfg .top input { flex: 1; min-width: 160px; }
 .cfg .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); }
-.cfg .sum, .cfg .catalog { min-height: 0; overflow: auto; padding: 12px; }
+.cfg .sum, .cfg .catalog { min-height: 0; overflow: auto; padding: 12px 12px 108px; }
 .cfg .sum { border-right: 1px solid var(--line); }
 .cfg .sum-h { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .cfg .sum-h input { flex: 1; font-weight: 650; }
@@ -158,3 +201,72 @@
   .cfg .buy { align-items: stretch; }
   .cfg .top { position: sticky; top: 0; z-index: 2; }
 }
+.cfg.size-desk .sheet { width: min(880px, 100%); }
+.cfg.size-tablet .sheet { width: min(820px, 100%); }
+.cfg.size-phone .sheet { width: min(440px, 100%); }
+.cfg.size-phone,
+.cfg.size-tv { font-size: 18px; }
+.cfg.size-tv h1 { font-size: 40px; }
+.cfg.size-tv .price-lg { font-size: 42px; }
+.cfg.size-tv .build-row,
+.cfg.size-tv .pills button,
+.cfg.size-tv .picks button,
+.cfg.size-phone .build-row { min-height: 64px; }
+.cfg.size-phone .body,
+.cfg.size-tv .body { grid-template-columns: 1fr; }
+.cfg.size-phone .sum,
+.cfg.size-tv .sum { display: none; border-right: 0; }
+.cfg.size-phone .body.show-build .sum,
+.cfg.size-tv .body.show-build .sum { display: block; }
+.cfg.size-phone .body.show-build .catalog,
+.cfg.size-tv .body.show-build .catalog { display: none; }
+.cfg.size-phone .build-toggle,
+.cfg.size-tv .build-toggle { display: inline-flex; align-items: center; }
+.cfg.size-phone .parts li,
+.cfg.size-tv .parts li { grid-template-columns: 1fr; }
+.easy-bar {
+  position: fixed;
+  z-index: 46;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: var(--card);
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+  font: 16px/1.3 "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Noto Sans Gurmukhi", "Noto Sans SC", sans-serif;
+}
+.easy-bar > button {
+  min-height: 48px;
+  min-width: 88px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 700;
+  border-radius: 2px;
+}
+.easy-bar > button.on { background: var(--ink); color: var(--bg); }
+.easy-panel { flex: 1 0 100%; display: flex; flex-direction: column; gap: 8px; }
+.easy-panel p { margin: 0; font-weight: 700; }
+.easy-swatches, .easy-sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+.easy-swatches button, .easy-sizes button {
+  min-height: 48px;
+  min-width: 76px;
+  padding: 8px 12px;
+  border: 2px solid var(--line);
+  border-radius: 2px;
+  font-weight: 700;
+  background: var(--card);
+  color: var(--ink);
+}
+.easy-swatches button.on, .easy-sizes button.on { outline: 3px solid var(--ink); }
+.easy-swatches .swatch.light { background: #f4f0e6; color: #1c1915; }
+.easy-swatches .swatch.dark { background: #141311; color: #f3efe6; }
+.easy-swatches .swatch.green { background: #1d6b32; color: #f4fff6; }
+.easy-swatches .swatch.blue { background: #1d4e89; color: #f4f8ff; }
+.easy-swatches .swatch.red { background: #8d2f2a; color: #fff6f4; }
