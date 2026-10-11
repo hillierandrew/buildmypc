@@ -168,6 +168,7 @@ export function Gate() {
     nHits.current += 1;
     if (nHits.current >= 3) {
       nHits.current = 0;
+      useBuilder.getState().setEdition("shop");
       setDevices(true);
     }
   }
@@ -209,6 +210,11 @@ export function Gate() {
       }
     };
     screamRef.current = { stop };
+  }
+
+  function hitO() {
+    useBuilder.getState().setEdition("bench");
+    enter("desk");
   }
 
   function hitC() {
@@ -273,7 +279,10 @@ export function Gate() {
             <button type="button" className="secret-n" onClick={hitC}>
               c
             </button>
-            tio
+            ti
+            <button type="button" className="secret-n" onClick={hitO}>
+              o
+            </button>
             <button type="button" className="secret-n" onClick={hitN}>
               n
             </button>

@@ -107,6 +107,7 @@ interface BuilderState {
   layoutMode: LayoutMode;
   layoutCompact: boolean;
   surface: "build" | "hub";
+  edition: "shop" | "bench";
   erp: boolean;
   disguise: string | null;
   tourOn: boolean;
@@ -120,6 +121,7 @@ interface BuilderState {
   unlock: (id: number) => void;
   enter: (dest: "hub" | LayoutMode) => void;
   setSurface: (surface: "build" | "hub") => void;
+  setEdition: (edition: "shop" | "bench") => void;
   openPw: () => void;
   closePw: () => void;
   failPw: (msg: string) => void;
@@ -189,6 +191,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
   layoutMode: "phone",
   layoutCompact: true,
   surface: "build",
+  edition: "shop",
   erp: false,
   disguise: null,
   tourOn: false,
@@ -231,6 +234,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
     });
   },
   setSurface: (surface) => set({ surface }),
+  setEdition: (edition) => set({ edition }),
   openPw: () => set({ pwOpen: true, pwError: "" }),
   closePw: () => set({ pwOpen: false, pwError: "" }),
   failPw: (msg) => set({ pwError: msg }),

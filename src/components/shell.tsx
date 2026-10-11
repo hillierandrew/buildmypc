@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DISGUISE_KEYS } from "@/lib/disguises";
 import { LAYOUT_CHOICES, useBuilder } from "@/lib/store";
 import { styleById } from "@/lib/ui-styles";
+import { Bench } from "@/components/bench";
 import { Configurator } from "@/components/configurator";
 import { EasyBar } from "@/components/easy-bar";
 import { Gate } from "@/components/gate";
@@ -14,6 +15,7 @@ export function Shell() {
   const currentUI = useBuilder((s) => s.currentUI);
   const themeCycle = useBuilder((s) => s.themeCycle);
   const layoutMode = useBuilder((s) => s.layoutMode);
+  const edition = useBuilder((s) => s.edition);
   const basicMode = useBuilder((s) => s.basicMode);
   const disguise = useBuilder((s) => s.disguise);
   const modal = useBuilder((s) => s.modal);
@@ -60,10 +62,11 @@ export function Shell() {
 
   useEffect(() => {
     if (!unlocked) document.title = "No internet connection";
+    else if (edition === "bench") document.title = "Shelf";
     else if (erp) document.title = "Sales Order - ERP";
     else if (picker) document.title = "BuildMyPC Parts List";
     else document.title = "BuildMyPC";
-  }, [unlocked, erp, picker]);
+  }, [unlocked, erp, picker, edition]);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -119,8 +122,14 @@ export function Shell() {
         <Gate />
       ) : (
         <>
-          <Configurator />
-          <EasyBar />
+          {edition === "bench" ? (
+            <Bench />
+          ) : (
+            <>
+              <Configurator />
+              <EasyBar />
+            </>
+          )}
         </>
       )}
       {disguise ? <Disguise /> : null}
